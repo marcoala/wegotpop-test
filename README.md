@@ -62,3 +62,23 @@ Like in the age range I assume that we can extend the search a bit further the d
 
 
 Said that the most important parameter is definitely age, since is the closest that we've to the look of the artist. Followed by price and location at the same level.
+
+## Tests
+
+Tests use [tox](https://tox.readthedocs.io), a global install is suggested (tox is not included in the requirements)
+
+```bash
+pip install tox
+```
+
+Then you can run all tests, or one single test:
+
+```bash
+# run all tests
+tox
+# run only tests in python 3.4
+tox -e py34
+# run only flake8
+tox -e flake8
+```
+Tox is setted up to report the coverage in the comand line, but also to create html browsale verison of the coverage report, it will be generated at `htmlcov/index.html`.
