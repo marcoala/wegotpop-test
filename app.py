@@ -57,7 +57,7 @@ def create_index():
         body['rate'] = artist['rate']
         body['uuid'] = artist['uuid']
         body['location'] = artist['latitude'] + ', ' + artist['longitude']
-        res = es.index(index=constants.INDEX_NAME, doc_type='artist', body=body)
+        res = es.index(index=constants.INDEX_NAME, doc_type='artist', body=body, id=artist['uuid'])
 
     es.indices.refresh(index=constants.INDEX_NAME)
     res = es.search(index=constants.INDEX_NAME, body={"query": {"match_all": {}}})
