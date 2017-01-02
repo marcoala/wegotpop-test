@@ -6,7 +6,7 @@ from envparse import Env
 from flask import Flask, request, json
 from flask.ext.elasticsearch import FlaskElasticsearch
 
-from artist import constants, forms
+from artist import constants, forms, managers
 
 env = Env()
 env.read_envfile()
@@ -79,70 +79,14 @@ def artists_view():
     """
     form = forms.ArtistsForm(request.args)
     if form.validate():
-        return json.jsonify({'ok': 'ok'})
+        manager = managers.ArtistManager(request.args)
+        artists = es.search(index=constants.INDEX_NAME, body={'query': manager.query})
+        return json.jsonify(artists)
     else:
         # bad request
         return json.jsonify(form.errors), 400
 
 
-@app.route('/test')
-def test_view():
-    INDEX_NAME = 'artist-index'
-    res = es.search(index=INDEX_NAME, body={
-        "query": {
-            "bool": {
-                "should": [
-                    {
-                        "range": {
-                            "age": {
-                                "gte": 0,
-                                "lte": 90
-                            },
-                        }
-                    },
-                    {
-                        "geo_distance": {
-                            "distance": "50km",
-                            "location": {
-                                "lat": "51.5126064",
-                                "lon": "-0.1802461"
-                            },
-                            "weight": 3
-                        }
-                    }
-                ],
-                "must": [
-                    {
-                        "geo_distance": {
-                            "distance": "100km",
-                            "location": {
-                                "lat": "51.5126064",
-                                "lon": "-0.1802461"
-                            },
-                            "weight": 1
-                        }
-                    }
-                ],
-                "filter": [
-                    {
-                        "range": {
-                            "rate": {
-                                "lte": 50
-                            }
-                        }
-                    },
-                    {
-                        "match": {
-                            "gender": "F",
-                        }
-                    },
-                ]
-            }
-        }
-    })
-    return json.jsonify(res)
-
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)

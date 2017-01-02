@@ -1,3 +1,5 @@
+from decimal import Decimal as D
+
 # the location of the file with the data to import
 DATA_FILE = 'artist/data/artists.json'
 
@@ -28,3 +30,7 @@ ARTIST_MAPPING = {
         }
     }
 }
+
+# constant to extend the search
+ARTIST_AGE_EXTENDER = 5
+ARTIST_DISTANCE_EXTENDER = D('1.5')
